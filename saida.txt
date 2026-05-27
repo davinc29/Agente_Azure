@@ -1,10 +1,10 @@
 ```json
 {
-  "o_que_fazer": "Arrumar minha tabela de dimensões",
-  "como_fazer": null,
-  "onde_fazer": null,
-  "quem_vai_fazer": null,
-  "prazo_entrega": null,
-  "data_inicio": null
+  "tarefa": "Criar tabelas de log",
+  "como": "SQL",
+  "onde": "Banco de Dados",
+  "quem": "DAVI",
+  "prazo_entrega": "30/05/2026",
+  "data_inicio": "27/05/2026"
 }
 ```

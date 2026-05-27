@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+import json
+
 from dotenv import load_dotenv
 import os
 from langchain_google_genai import ChatGoogleGenerativeAI
@@ -50,12 +52,12 @@ Você atua APENAS em:
 - Receber um texto desestruturado com erros
 - Corrigir o texto SEM alterar o significado
 - Identificar e extrair os seguintes campos:
-  - o_que_fazer
-  - como_fazer
-  - onde_fazer
-  - quem_vai_fazer
-  - prazo_entrega
-  - data_inicio
+  - tarefa (Indentifique as Palavras chaves que o usuario indicar relacionado ao que é necessario desenvolver, caso não fale nada coloque: Não indentificado)
+  - como (Indentifique a linguagem de programação que o usuario indicar relacionado ao como vai fazer a tarefa, ou relacionado a onde_vai_fazer, caso não use nenhuma coloque: Não indentificado)
+  - onde (Caso o usuario fale algo considere o que ele disser, caso não: busque a IDEA principal da linguagem que o usuario vai usar para fazer, caso não use nenhuma coloque: Não indentificado)
+  - quem (Indentifique as Palavras chaves que o usuario indicar relacionado ao quem irá fazer, caso não use nenhuma coloque: Não indentificado)
+  - prazo_entrega (Indentifique as Palavras chaves que o usuario indicar relacionado a quando será a entrega sempre trazer a data no formato: dd/mm/YYYY, caso não use nenhuma coloque: {hoje})
+  - data_inicio (Sempre use {hoje} no formato: dd/mm/YYYY)
 
 ### REGRAS
 - NUNCA altere informações (nomes, datas, valores, etc)
@@ -69,10 +71,10 @@ Você atua APENAS em:
 ### FORMATO DE RESPOSTA
 Retorne APENAS um JSON válido no seguinte formato:
 
-  "o_que_fazer": "",
-  "como_fazer": "",
-  "onde_fazer": "",
-  "quem_vai_fazer": "",
+  "tarefa": "",
+  "como": "",
+  "onde": "",
+  "quem": "",
   "prazo_entrega": "",
   "data_inicio": ""
 
@@ -95,12 +97,12 @@ SHOT_1 = """Exemplo:
 
 "ai":
 {
-  "o_que_fazer": "criar uma API de pagamento",
-  "como_fazer": "usando Node.js no backend",
-  "onde_fazer": "backend",
-  "quem_vai_fazer": "João",
-  "prazo_entrega": "dia 30",
-  "data_inicio": "ontem"
+  "tarefa": "API De Pagamento",
+  "como": "Node.js -> Backnd",
+  "onde": "Visual Studio Code -> Pricipal IDEA De Node.js",
+  "quem": "João",
+  "prazo_entrega": "30/05/2026",
+  "data_inicio": "27/05/2026"
 }
 """
 
@@ -128,8 +130,8 @@ app = create_agent(
 # Sistema Para o Usuario
 #=================================
  
-arquivo_entrada = r"C:\Users\ddncost1\Desktop\Dados\Agente\entrada.txt"
-arquivo_saida = r"C:\Users\ddncost1\Desktop\Dados\Agente\saida.txt"
+arquivo_entrada = r"C:\Users\ddncost1\Desktop\Dados\Agente\agente_azure\Agente_Azure\entrada.txt"
+arquivo_saida_txt = r"C:\Users\ddncost1\Desktop\Dados\Agente\agente_azure\Agente_Azure\saida.txt"
 
 if os.path.exists(arquivo_entrada):
     with open(arquivo_entrada, "r", encoding="utf-8") as f:
@@ -143,11 +145,23 @@ try:
         config={"configurable": {"thread_id": "Não Importa"}}
     )
 
-    
     texto_corrigido = response['messages'][-1].text
 
-    with open(arquivo_saida, "w", encoding="utf-8") as f:
+    texto_limpo = texto_corrigido.strip()
+
+    if texto_limpo.startswith("```"):
+        texto_limpo = texto_limpo.replace("```json", "").replace("```", "").strip()
+
+
+    with open(arquivo_saida_txt, "w", encoding="utf-8") as f:
         f.write(texto_corrigido)
+
+    texto_corrigido = json.loads(texto_limpo)
+
+    arquivo_saida_json = os.path.splitext(arquivo_saida_txt)[0] + ".json"
+
+    with open(arquivo_saida_json, "w", encoding="utf-8") as f:
+        json.dump({"texto": texto_corrigido}, f, ensure_ascii=False, indent=2)
 
 except Exception as e:
     print("Erro ao consumir API\n\n", e)

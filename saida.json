@@ -1,0 +1,10 @@
+{
+  "texto": {
+    "tarefa": "Criar tabelas de log",
+    "como": "SQL",
+    "onde": "Banco de Dados",
+    "quem": "DAVI",
+    "prazo_entrega": "30/05/2026",
+    "data_inicio": "27/05/2026"
+  }
+}
