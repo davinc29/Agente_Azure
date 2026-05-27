@@ -1,0 +1,10 @@
+```json
+{
+  "o_que_fazer": "Arrumar minha tabela de dimensões",
+  "como_fazer": null,
+  "onde_fazer": null,
+  "quem_vai_fazer": null,
+  "prazo_entrega": null,
+  "data_inicio": null
+}
+```
